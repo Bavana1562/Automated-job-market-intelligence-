@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Market Report - Thu Mar 05 2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .email-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: #1E3A5F;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #A8C8E8;
+            font-size: 13px;
+        }
+
+        .meta-bar {
+            background: #2980B9;
+            padding: 10px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meta-bar span {
+            color: white;
+            font-size: 12px;
+        }
+
+        .body {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 28px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #1E3A5F;
+            border-bottom: 2px solid #2980B9;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            background: #1E3A5F;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            background: #EBF5FB;
+            color: #2980B9;
+            border: 1px solid #AED6F1;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+
+        .stat-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: #F4F8FB;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid #D6EAF8;
+        }
+
+        .stat-box .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1E3A5F;
+        }
+
+        .stat-box .label {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .summary-box {
+            background: #F4F8FB;
+            border-left: 4px solid #2980B9;
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #444;
+        }
+
+        .location-badge {
+            display: inline-block;
+            background: #1E3A5F;
+            color: white;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 4px;
+        }
+
+        .trend-bar {
+            margin: 8px 0;
+        }
+
+        .trend-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .bar-bg {
+            background: #EEE;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: #2980B9;
+        }
+
+        .footer {
+            background: #1E3A5F;
+            padding: 20px 30px;
+            text-align: center;
+        }
+
+        .footer p {
+            color: #A8C8E8;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🤖 Daily Job Market Intelligence</h1>
+            <p>Automated report powered by LLaMA 3.3 · Arbeitnow API</p>
+        </div>
+
+        <!-- Meta bar -->
+        <div class="meta-bar">
+            <span>📅 Thursday, March 5, 2026</span>
+            <span>📊 20 new jobs analyzed</span>
+            <span>📍 Frankfurt, Germany</span>
+        </div>
+
+        <!-- Body -->
+        <div class="body">
+
+            <!-- Stats row -->
+            <div class="stat-row">
+                <div class="stat-box">
+                    <div class="number">20</div>
+                    <div class="label">Jobs Analyzed</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">65%</div>
+                    <div class="label">Remote Positions</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">5</div>
+                    <div class="label">Top Skills Found</div>
+                </div>
+                <div class="stat-box">
+                    <div class="number">€72k</div>
+                    <div class="label">Avg Salary</div>
+                </div>
+            </div>
+
+            <!-- Top Roles -->
+            <div class="section">
+                <div class="section-title">📈 Top In-Demand Roles</div>
+                <div class="list-item">
+                    <div class="rank">1</div>
+                    <span>Software Engineer</span>
+                </div>
+                <div class="list-item">
+                    <div class="rank">2</div>
+                    <span>Data Scientist</span>
+                </div>
+                <div class="list-item">
+                    <div class="rank">3</div>
+                    <span>DevOps Engineer</span>
+                </div>
+                <div class="list-item">
+                    <div class="rank">4</div>
+                    <span>Product Manager</span>
+                </div>
+                <div class="list-item">
+                    <div class="rank">5</div>
+                    <span>Frontend Developer</span>
+                </div>
+            </div>
+
+            <!-- Top Skills -->
+            <div class="section">
+                <div class="section-title">🛠️ Most Requested Skills</div>
+                <div style="padding: 8px 0;">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">AWS</span>
+                    <span class="skill-tag">Docker</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">Kubernetes</span>
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">FastAPI</span>
+                </div>
+            </div>
+
+            <!-- Remote Trend -->
+            <div class="section">
+                <div class="section-title">💻 Remote vs Onsite Trend</div>
+                <div class="trend-bar">
+                    <div class="trend-label">
+                        <span>Remote</span>
+                        <span>65%</span>
+                    </div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div class="trend-bar">
+                    <div class="trend-label">
+                        <span>Hybrid</span>
+                        <span>25%</span>
+                    </div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 25%; background: #1E3A5F;"></div>
+                    </div>
+                </div>
+                <div class="trend-bar">
+                    <div class="trend-label">
+                        <span>Onsite</span>
+                        <span>10%</span>
+                    </div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 10%; background: #AED6F1;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Geographic Hotspots -->
+            <div class="section">
+                <div class="section-title">📍 Geographic Hotspots</div>
+                <div style="padding: 8px 0;">
+                    <span class="location-badge">🇩🇪 Frankfurt</span>
+                    <span class="location-badge">🇩🇪 Berlin</span>
+                    <span class="location-badge">🇩🇪 Munich</span>
+                    <span class="location-badge">🇳🇱 Amsterdam</span>
+                    <span class="location-badge">🇬🇧 London</span>
+                </div>
+            </div>
+
+            <!-- Market Summary -->
+            <div class="section">
+                <div class="section-title">📋 AI Market Summary</div>
+                <div class="summary-box">
+                    Today's job market shows strong demand for software engineers
+                    and data scientists across European tech hubs, particularly
+                    in Frankfurt and Berlin. Python remains the most requested
+                    skill for the third consecutive week, followed closely by
+                    React and AWS. Remote work continues to dominate with 65%
+                    of positions offering full location flexibility. Fintech
+                    and SaaS companies are the most active hirers in the
+                    Frankfurt region this week.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                Generated by Automated Job Market Intelligence System<br/>
+                Powered by n8n · YepCode · Groq LLaMA 3.3 · Arbeitnow API<br/>
+                This report runs automatically every morning at 7:00 AM
+            </p>
+        </div>
+
+    </div>
+</body>
+</html>

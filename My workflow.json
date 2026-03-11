@@ -1,0 +1,229 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            },
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c839f942-bc5e-4b22-92a1-251c821925b1",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "url": "https://arbeitnow.com/api/job-board-api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "32a85e9f-c53a-42c8-956a-1e7f77fdc28e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jobs = $input.first().json.data || [];\n\n// Filter ONLY Frankfurt/Germany jobs\nconst frankfurtJobs = jobs.filter(job => {\n  const location = (job.location || '').toLowerCase();\n  return location.includes('frankfurt') || \n         location.includes('germany') ||\n         location.includes('deutschland') ||\n         location.includes('de');\n});\n\n// Take first 20\nconst trimmedJobs = frankfurtJobs.slice(0, 20);\n\n// Keep only needed fields\nconst cleanJobs = trimmedJobs.map(job => ({\n  title: job.title || 'N/A',\n  company_name: job.company_name || 'N/A',\n  location: job.location || 'N/A',\n  tags: job.tags || [],\n  url: job.url || '',\n  remote: job.remote || false,\n  created_at: job.created_at || ''\n}));\n\nreturn [{ json: { data: cleanJobs } }];\n\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4d090033-830f-4217-b600-a5e37279ca17",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "run_code",
+        "code": "import openai\nimport json\n\ndef main():\n    # Get data using n8n context method\n    n8n_data = yepcode.context.parameters.n8n\n    items = n8n_data.get('items', [])\n    \n    # Get jobs from first item\n    jobs = []\n    if items:\n        jobs = items[0].get('json', {}).get('new_jobs', [])\n    \n    # Get OpenAI key from environment\n    openai_key = yepcode.context.parameters.n8n.get('env', {}).get('OPENAI_KEY', '')\n    \n    if not jobs:\n        return {\"report\": \"No new jobs found today!\", \"summary\": \"Nothing to analyze\"}\n\n    openai.api_key = openai_key\n\n    job_list = []\n    for job in jobs[:20]:\n        job_list.append(\n            f\"- {job.get('title','N/A')} at {job.get('company','N/A')} ({job.get('location','N/A')})\"\n        )\n\n    job_text = \"\\n\".join(job_list)\n\n    response = openai.chat.completions.create(\n        model=\"gpt-4o-mini\",\n        messages=[\n            {\n                \"role\": \"user\",\n                \"content\": f\"\"\"\nYou are a job market analyst.\nHere are today's new job postings:\n\n{job_text}\n\nPlease provide:\n1. Top 5 most in demand job roles\n2. Top 5 most requested skills\n3. Remote vs onsite trend\n4. Geographic hotspots\n5. One paragraph market summary\n\nFormat your response as JSON with these keys:\ntop_roles, top_skills, remote_trend, locations, summary\n\"\"\"\n            }\n        ]\n    )\n\n    content = response.choices[0].message.content\n    clean = content.replace('```json', '').replace('```', '').strip()\n    result = json.loads(clean)\n    result['jobs_analyzed'] = len(jobs)\n\n    return result",
+        "showAdvancedForRunCode": true
+      },
+      "type": "n8n-nodes-yepcode.yepCode",
+      "typeVersion": 1,
+      "position": [
+        304,
+        224
+      ],
+      "id": "4a1e9a08-776f-4c42-8812-b8ab5d1676be",
+      "name": "YepCode",
+      "credentials": {
+        "yepCodeApi": {
+          "id": "wNjQmrnNR4ueVQ6i",
+          "name": "YepCode account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"You are a job market analyst. Here are today's new job postings:\\n{{ $json.new_jobs.map(j => '- ' + j.title + ' at ' + j.company_name + ' (' + j.location + ')').join('\\\\n') }}\\n\\nPlease provide:\\n1. Top 5 most in demand job roles\\n2. Top 5 most requested skills\\n3. Remote vs onsite trend\\n4. Geographic hotspots\\n5. One paragraph market summary\\n\\nFormat your response as JSON with these exact keys: top_roles, top_skills, remote_trend, locations, summary\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        16,
+        432
+      ],
+      "id": "d1095e5c-54af-4622-bd9d-d7c5594d5d59",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "7d7gxtzIDaoHeHsA",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get Groq response\nconst response = $input.first().json;\nconst content = response.choices[0].message.content;\n\n// Clean and parse JSON\nconst clean = content.replace(/```json/g, '').replace(/```/g, '').trim();\nconst analysis = JSON.parse(clean);\n\n// Format into nice HTML report\nconst date = new Date().toDateString();\n\nconst html = `\n<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n\n<h1 style=\"color: #1E3A5F; border-bottom: 3px solid #2980B9; padding-bottom: 10px;\">\n  🤖 Daily Job Market Intelligence\n</h1>\n<p style=\"color: #666;\">Report Date: ${date}</p>\n\n<h2 style=\"color: #2980B9;\">📈 Top In-Demand Roles</h2>\n<ul>\n${(analysis.top_roles || []).map(r => `<li style=\"margin: 5px 0;\">${r}</li>`).join('')}\n</ul>\n\n<h2 style=\"color: #2980B9;\">🛠️ Most Requested Skills</h2>\n<ul>\n${(analysis.top_skills || []).map(s => `<li style=\"margin: 5px 0;\">${s}</li>`).join('')}\n</ul>\n\n<h2 style=\"color: #2980B9;\">💻 Remote vs Onsite</h2>\n<p>${analysis.remote_trend || 'N/A'}</p>\n\n<h2 style=\"color: #2980B9;\">📍 Geographic Hotspots</h2>\n<p>${Array.isArray(analysis.locations) ? analysis.locations.join(', ') : analysis.locations || 'N/A'}</p>\n\n<h2 style=\"color: #2980B9;\">📋 Market Summary</h2>\n<p style=\"background: #f0f4f8; padding: 15px; border-radius: 5px; line-height: 1.6;\">\n${analysis.summary || 'N/A'}\n</p>\n\n<hr style=\"border: 1px solid #eee; margin-top: 30px;\">\n<p style=\"color: #999; font-size: 12px;\">\n  Generated by Automated Job Market Intelligence System\n</p>\n\n</body>\n</html>\n`;\n\nreturn [{ \n  json: { \n    html_report: html,\n    analysis: analysis,\n    date: date\n  } \n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        432
+      ],
+      "id": "b625cb54-9b8a-4d30-8bdb-4517068b880e",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "fromEmail": "jadalabavana096@gmail.com",
+        "toEmail": "jadalabavana096@gmail.com",
+        "subject": "=Job Market Report - {{ new Date().toDateString() }}",
+        "html": "={{ $json.html_report }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        576,
+        432
+      ],
+      "id": "01140ab6-283c-4544-864e-badf4c248cb5",
+      "name": "Send an Email",
+      "webhookId": "6a02f4ec-e57a-47ac-a51b-9b9f63a3de7c",
+      "credentials": {
+        "smtp": {
+          "id": "hmSuaWw0NaouVAYo",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "YepCode",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YepCode": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bd01d8fc-605f-4842-9ff5-61817872bceb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c9d13b5307d969a988481a39de7141e6eaf9f86839a700ce90b7be0af89df9d8"
+  },
+  "id": "ID6NnauV6l3tIRrF",
+  "tags": []
+}
